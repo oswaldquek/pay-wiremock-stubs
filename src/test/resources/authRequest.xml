@@ -8,7 +8,7 @@
             <amount currencyCode="GBP" exponent="2" value="5000"/>
             <paymentDetails>
                 <CARD-SSL>
-                    <cardNumber>{{cardNumber}}</cardNumber>
+                    <cardNumber>4242424242424242</cardNumber>
                     <expiryDate>
                         <date month="3" year="2016"/>
                     </expiryDate>

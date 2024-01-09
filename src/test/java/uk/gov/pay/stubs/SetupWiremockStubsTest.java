@@ -1,17 +1,17 @@
 package uk.gov.pay.stubs;
 
-import com.google.common.net.MediaType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.InputStream;
+import java.io.File;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.function.Supplier;
+import java.nio.file.Files;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SetupWiremockStubsTest {
 
@@ -26,10 +26,32 @@ class SetupWiremockStubsTest {
 
     @Test
     void shouldReturnUnauthorizedIfNoAuthHeaderProvided() throws Exception {
-        HttpRequest httpRequest = request.POST(HttpRequest.BodyPublishers.ofInputStream(() -> getClass().getClassLoader().getResourceAsStream("authRequest.xml")))
+        HttpRequest httpRequest = request.POST(HttpRequest.BodyPublishers.ofString(readFile("authRequest.xml")))
                 .header("Content-Type", "application/xml")
                 .build();
         HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         assertEquals(401, httpResponse.statusCode());
+    }
+
+    @Test
+    void shouldReturnAnAuthorisation() throws Exception {
+        HttpRequest httpRequest = request.POST(HttpRequest.BodyPublishers.ofString(readFile("authRequest.xml")))
+                .header("Content-Type", "application/xml")
+                .header("Authorization", "a-secret")
+                .build();
+        HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, httpResponse.statusCode());
+        assertEquals("text/xml;charset=utf-8", httpResponse.headers().firstValue("Content-Type").get());
+        assertEquals(authSuccessResponse(), httpResponse.body());
+    }
+
+    private String authSuccessResponse() throws Exception {
+        return readFile("authSuccessResponse.xml");
+    }
+
+    private String readFile(String filename) throws Exception {
+        URL url = getClass().getClassLoader().getResource(filename);
+        File file = new File(url.getFile());
+        return new String(Files.readAllBytes(file.toPath()));
     }
 }
