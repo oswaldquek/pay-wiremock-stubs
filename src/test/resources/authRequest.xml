@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE paymentService PUBLIC "-//WorldPay//DTD WorldPay PaymentService v1//EN"
+        "http://dtd.worldpay.com/paymentService_v1.dtd">
+<paymentService version="1.4" merchantCode="123-456-789">
+    <submit>
+        <order orderCode="abcd-efgh-hjkl">
+            <description>description</description>
+            <amount currencyCode="GBP" exponent="2" value="5000"/>
+            <paymentDetails>
+                <CARD-SSL>
+                    <cardNumber>{{cardNumber}}</cardNumber>
+                    <expiryDate>
+                        <date month="3" year="2016"/>
+                    </expiryDate>
+                    <cardHolderName>Ms C Holder</cardHolderName>
+                    <cvc>123</cvc>
+                    <cardAddress>
+                        <address>
+                            <address1>34 Address Street</address1>
+                            <postalCode>AN1 2AD</postalCode>
+                            <city>London</city>
+                            <state>London</state>
+                            <countryCode>UK</countryCode>
+                        </address>
+                    </cardAddress>
+                </CARD-SSL>
+            </paymentDetails>
+        </order>
+    </submit>
+</paymentService>
