@@ -78,6 +78,22 @@ class SetupWiremockStubsTest {
         assertEquals(authSuccessResponse(), httpResponse.body());
     }
 
+    @Test
+    void shouldReturnACapture() throws Exception {
+        HttpRequest httpRequest = request.POST(BodyPublishers.ofString(readFile("captureRequest.xml")))
+                .header("Content-Type", "application/xml")
+                .header("Authorization", "a-secret")
+                .build();
+        HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, httpResponse.statusCode());
+        assertEquals("text/xml;charset=utf-8", httpResponse.headers().firstValue("Content-Type").get());
+        assertEquals(captureSuccessResponse(), httpResponse.body());
+    }
+
+    private String captureSuccessResponse() throws Exception {
+        return readFile("captureSuccessResponse.xml");
+    }
+
     private String readFile(String filename) throws Exception {
         URL url = getClass().getClassLoader().getResource(filename);
         File file = new File(url.getFile());
