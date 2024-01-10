@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingXPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
@@ -24,7 +25,6 @@ public class SetupWiremockStubs {
                 .port(443)
                 .authenticator(new ClientTokenAuthenticator(System.getenv("WIREMOCK_API_TOKEN")))
                 .build();
-        WireMock.configureFor(wm);
     }
 
     public static void main(String[] args) throws Exception {
@@ -32,18 +32,41 @@ public class SetupWiremockStubs {
         var setupWiremockStubs = new SetupWiremockStubs();
         setupWiremockStubs.stubUnauthorized();
         setupWiremockStubs.stubReturnAuthorisation();
+        setupWiremockStubs.stubFirst3DSSuccessResponse();
+        setupWiremockStubs.stubSecond3DSSuccessResponse();
     }
 
     private void stubUnauthorized() {
         wm.register(post(urlEqualTo("/stub/worldpay")).atPriority(10) //1 is highest
-                .willReturn(aResponse()
-                        .withStatus(401)));
+                .willReturn(aResponse().withStatus(401)));
     }
 
     private void stubReturnAuthorisation() throws Exception {
+        wm.register(post(urlEqualTo("/stub/worldpay")).atPriority(3)
+                .withHeader("Authorization", matching(".*"))
+                .withHeader("Content-Type", equalTo("application/xml"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/xml;charset=utf-8")
+                        .withBody(readFile("authSuccessResponse.xml"))));
+    }
+
+    private void stubFirst3DSSuccessResponse() throws Exception {
         wm.register(post(urlEqualTo("/stub/worldpay")).atPriority(1)
-                        .withHeader("Authorization", matching(".*"))
-                        .withHeader("Content-Type", equalTo("application/xml"))
+                .withHeader("Authorization", matching(".*"))
+                .withHeader("Content-Type", equalTo("application/xml"))
+                .withRequestBody(matchingXPath("/paymentService/submit/order/shopper"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/xml;charset=utf-8")
+                        .withBody(readFile("authFirst3DSSuccessResponse.xml"))));
+    }
+
+    private void stubSecond3DSSuccessResponse() throws Exception {
+        wm.register(post(urlEqualTo("/stub/worldpay")).atPriority(2)
+                .withHeader("Authorization", matching(".*"))
+                .withHeader("Content-Type", equalTo("application/xml"))
+                .withRequestBody(matchingXPath("/paymentService/submit/order/info3DSecure"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml;charset=utf-8")

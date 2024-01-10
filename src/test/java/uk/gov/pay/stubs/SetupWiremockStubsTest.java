@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 
@@ -26,7 +27,7 @@ class SetupWiremockStubsTest {
 
     @Test
     void shouldReturnUnauthorizedIfNoAuthHeaderProvided() throws Exception {
-        HttpRequest httpRequest = request.POST(HttpRequest.BodyPublishers.ofString(readFile("authRequest.xml")))
+        HttpRequest httpRequest = request.POST(BodyPublishers.ofString(readFile("authRequest.xml")))
                 .header("Content-Type", "application/xml")
                 .build();
         HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
@@ -35,7 +36,7 @@ class SetupWiremockStubsTest {
 
     @Test
     void shouldReturnAnAuthorisation() throws Exception {
-        HttpRequest httpRequest = request.POST(HttpRequest.BodyPublishers.ofString(readFile("authRequest.xml")))
+        HttpRequest httpRequest = request.POST(BodyPublishers.ofString(readFile("authRequest.xml")))
                 .header("Content-Type", "application/xml")
                 .header("Authorization", "a-secret")
                 .build();
@@ -47,6 +48,34 @@ class SetupWiremockStubsTest {
 
     private String authSuccessResponse() throws Exception {
         return readFile("authSuccessResponse.xml");
+    }
+
+    @Test
+    void shouldSucceedOnFirstAuth3DSRequest() throws Exception {
+        HttpRequest httpRequest = request.POST(BodyPublishers.ofString(readFile("authFirst3DSRequest.xml")))
+                .header("Content-Type", "application/xml")
+                .header("Authorization", "a-secret")
+                .build();
+        HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, httpResponse.statusCode());
+        assertEquals("text/xml;charset=utf-8", httpResponse.headers().firstValue("Content-Type").get());
+        assertEquals(authFirst3DSSuccessResponse(), httpResponse.body());
+    }
+
+    private String authFirst3DSSuccessResponse() throws Exception {
+        return readFile("authFirst3DSSuccessResponse.xml");
+    }
+
+    @Test
+    void shouldSucceedOnSecondAuth3DSRequest() throws Exception {
+        HttpRequest httpRequest = request.POST(BodyPublishers.ofString(readFile("authSecond3DSRequest.xml")))
+                .header("Content-Type", "application/xml")
+                .header("Authorization", "a-secret")
+                .build();
+        HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, httpResponse.statusCode());
+        assertEquals("text/xml;charset=utf-8", httpResponse.headers().firstValue("Content-Type").get());
+        assertEquals(authSuccessResponse(), httpResponse.body());
     }
 
     private String readFile(String filename) throws Exception {
