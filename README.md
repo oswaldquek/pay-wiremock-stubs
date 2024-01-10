@@ -1,1 +1,20 @@
 # pay-wiremock-stubs
+
+Intended to replace GOV.UK Pay's pay-stubs (private) project. The motivations for doing so are as follows:
+
+* Pay's skill set is more geared towards Java, but pay-stubs is built in Node.
+* Related to the above, pay-stubs is a running server we have to maintain and uses 38 libraries at the time
+of writing. In contrast this pay-wiremock-stubs project only requires 3 libraries.
+* Java devs already use Wiremock for integration tests so there is familiarity with the DSL.
+* Stubbing becomes a matter of configuring the Wiremock SaaS service, rather than coding a stub and making 
+it go through a deployment pipeline.
+
+## How to run
+
+I have a Wiremock cloud account at https://lrmjj.wiremockapi.cloud. To set up the stubs, run the `main` method
+of SetupWiremockStubs. This requires a Wiremock token which corresponds to an environment variable 
+WIREMOCK_API_TOKEN. Note that if you re-run `main` you'll set up duplicate stubs in the Wiremock account.
+There is a TODO on how to make sure this cannot happen.
+
+Run SetupWiremockStubsTest to verify the stubs have been set up correctly on Wiremock cloud. These tests
+should correspond to the unit tests in pay-stubs.
