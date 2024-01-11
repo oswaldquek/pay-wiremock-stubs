@@ -6,7 +6,6 @@ import com.github.tomakehurst.wiremock.security.ClientTokenAuthenticator;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
-import java.time.LocalDate;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -81,12 +80,6 @@ public class SetupWiremockStubs {
     }
 
     private void stubCaptureSuccessResponse() throws Exception {
-        LocalDate now = LocalDate.now();
-        String response = readFile("notification.xml")
-                .replace("{{bookingDateDay}}", String.valueOf(now.getDayOfMonth()))
-                .replace("{{bookingDateMonth}}", String.valueOf(now.getMonthValue()))
-                .replace("{{bookingDateYear}}", String.valueOf(now.getYear()));
-
         wm.register(post(urlEqualTo("/stub/worldpay")).atPriority(3)
                 .withHeader("Authorization", matching(".*"))
                 .withHeader("Content-Type", equalTo("application/xml"))
@@ -100,7 +93,7 @@ public class SetupWiremockStubs {
                                 .withMethod(POST)
                                 .withUrl(System.getenv("WEBHOOK_URL"))
                                 .withHeader("Content-Type", "text/xml")
-                                .withBody(response))
+                                .withBody(readFile("notification.xml")))
         );
     }
 

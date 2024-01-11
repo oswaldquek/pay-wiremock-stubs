@@ -26,5 +26,5 @@ should correspond to the unit tests in pay-stubs.
 * Clear out the stubs on the [stubs page](https://app.wiremock.cloud/mock-apis/lrmjj/stubs/c28f6ff7-d043-429a-9dee-cfe53c738d91).
 * Run `SetupWiremockStubs.main` and verify stubs have been created.
 * Run `SetupWiremockStubsTest` and verify all tests pass.
-* Navigate to http://localhost:4040/inspect/http to verify the webhook for the capture request was received.
+* Navigate to http://localhost:4040/inspect/http (this is an ngrok feature) to verify the webhook for the capture request was received.
 Verify the orderCode matches the orderCode in the captureRequest.xml.

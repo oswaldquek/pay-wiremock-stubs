@@ -3,7 +3,7 @@
         "http://dtd.worldpay.com/paymentService_v1.dtd">
 <paymentService version="1.4" merchantCode="${merchantCode}">
     <modify>
-        <orderModification orderCode="abcd-efgh-ijkl">
+        <orderModification orderCode="lalaland">
             <capture>
                 <date dayOfMonth="28" month="10" year="2015"/>
                 <amount currencyCode="GBP" exponent="2" value="5000"/>
