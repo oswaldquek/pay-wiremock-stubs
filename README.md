@@ -5,6 +5,8 @@ Intended to replace GOV.UK Pay's pay-stubs (private) project. The motivations fo
 * Pay's skill set is more geared towards Java, but pay-stubs is built in Node.
 * Related to the above, pay-stubs is a running server we have to maintain and uses 38 libraries at the time
 of writing. In contrast this pay-wiremock-stubs project only requires 3 libraries.
+* We've been wanting to [make pay-stubs send capture notifications](https://payments-platform.atlassian.net/browse/PP-10886)
+since 3/4/23. This would ensure we're accurately performance testing our environment.
 * Java devs already use Wiremock for integration tests so there is familiarity with the DSL.
 * Stubbing becomes a matter of configuring the Wiremock SaaS service, rather than coding a stub and making 
 it go through a deployment pipeline.
