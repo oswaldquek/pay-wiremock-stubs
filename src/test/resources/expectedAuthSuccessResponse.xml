@@ -3,7 +3,7 @@
         "http://dtd.worldpay.com/paymentService_v1.dtd">
 <paymentService version="1.4" merchantCode="123-456-789">
     <reply>
-        <orderStatus orderCode="{{xPath request.body '/paymentService/submit/order/@orderCode'}}">
+        <orderStatus orderCode="abcd-efgh-hjkl">
             <payment>
                 <paymentMethod>VISA-SSL</paymentMethod>
                 <paymentMethodDetail>

@@ -13,6 +13,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingXPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.http.RequestMethod.POST;
 import static org.wiremock.webhooks.Webhooks.webhook;
 
@@ -37,6 +38,18 @@ public class SetupWiremockStubs {
         setupWiremockStubs.stubFirst3DSSuccessResponse();
         setupWiremockStubs.stubSecond3DSSuccessResponse();
         setupWiremockStubs.stubCaptureSuccessResponse();
+        setupWiremockStubs.stubHtml3dsSimulator();
+    }
+
+    private void stubHtml3dsSimulator() throws Exception {
+//        wm.register(post(urlEqualTo("/3ds-simulator"))
+        wm.register(post(urlMatching("/3ds-simulator\\?orderCode=.*"))
+//                .withQueryParam("orderCode", not(absent())) // This is ideal but doesn't work :(
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withTransformers("response-template") // This is required to <a href="https://docs.wiremock.io/response-templating/basics/">Enable dynamic response templating</a>
+                        .withBody(readFile("3dsSimulator.html"))
+                        .withHeader("Content-Type", "text/html")));
     }
 
     private void stubUnauthorized() {
@@ -51,6 +64,7 @@ public class SetupWiremockStubs {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml;charset=utf-8")
+                        .withTransformers("response-template")
                         .withBody(readFile("authSuccessResponse.xml")))
         );
     }
@@ -63,6 +77,7 @@ public class SetupWiremockStubs {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml;charset=utf-8")
+                        .withTransformers("response-template")
                         .withBody(readFile("authFirst3DSSuccessResponse.xml")))
         );
     }
@@ -75,6 +90,7 @@ public class SetupWiremockStubs {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml;charset=utf-8")
+                        .withTransformers("response-template")
                         .withBody(readFile("authSuccessResponse.xml")))
         );
     }
