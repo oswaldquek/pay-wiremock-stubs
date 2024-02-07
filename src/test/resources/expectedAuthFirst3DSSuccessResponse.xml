@@ -8,7 +8,7 @@
                 <request3DSecure> <!--PaRequest must be supplied as-is. Do not truncate-->
                     <paRequest>eJxVUsFuwjAM/ZWK80aSUgpFJogNpHEo2hjTzl</paRequest>
                     <issuerURL>
-                        <![CDATA[https://lrmjj.wiremockapi.cloud/3ds-simulator?orderCode={{xPath request.body '/paymentService/submit/order/@orderCode'}}]]>
+                        <![CDATA[https://lrmjj.wiremockapi.cloud/3ds-simulator?orderCode=abcd-efgh-hjkl]]>
                     </issuerURL>
                 </request3DSecure>
             </requestInfo>

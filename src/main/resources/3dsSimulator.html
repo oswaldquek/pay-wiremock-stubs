@@ -1,0 +1,70 @@
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link href="/public/stylesheets/application.css" rel="stylesheet" type="text/css" />
+</head>
+<style>
+    td {
+        max-width: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+
+<h1 id="threeds-sim-title" class="heading-large">3D Secure Simulator</h1>
+
+<p>Worldpay Cardholder Test Issuer received 3D Secure request for:
+
+<table>
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Value</th>
+    </tr>
+    </thead>
+    <tr>
+        <td><strong>Order Code</strong></td>
+        <td id="threeds-sim-order-code">{{request.query.orderCode}}</td>
+    </tr>
+    <tr>
+        <td><strong>PaReq</strong></td>
+        <td id="threeds-sim-pa-req">{{jsonPath request.body '$.PaReq'}}</td>
+    </tr>
+</table>
+
+<h2 class="heading-small">Please submit your Cardholder Authenticated Response</h2>
+
+<p id="threeds-sim-term-url">This will submit the following form data to: <code>{{jsonPath request.body '$.TermUrl'}}</code></p>
+<table>
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Value</th>
+    </tr>
+    </thead>
+    <tr>
+        <td><strong>PaRes</strong></td>
+        {{#eq (jsonPath request.body '$.PaReq') 'authorisation_fail'}}
+            <td id="threeds-sim-pa-res">authorisation_fail</td>
+        {{else}}
+            <td id="threeds-sim-pa-res">eJx9UsFugzAMve8rEPc2JECLkJuKiVbi0KpambQrAotGKtAlUHV/P8O6wjRtviR+frafncD6Vp2tK2qjmnpl87ljW1jnTaHqcmW/pttZYK8lpCeNGB8x7zRK2KExWYmWKijDC3zXcxeey3lgSzhEL2h+R+ZGlTUWRLj3ktRqLoB9u1RU56esbiVk+ftzspd8NGB3DCrUSTwN9TYbeV9xYGO1Q9ffDMm+qUIm0Z+2AtYzoMhalMLhS4cL3+I8FMtQuMAGHC59uahqOqrt+ktgUwBoP5rW9yEDsQD28ABvl6ZGYtDEjzuwUdsh2ktnYp7wiNqjkL5JaFX10LSwuBcKETrUfMDBtFnbGZnEm32abJNNDOwOQZ5dr3L379ADBTBX0vFJHZ1DVnQuG63aU9Vr/gkA6zWx4aklHOllqZlGNux9+Bo9Zfplnj4B7Re73w==</td>
+        {{/eq}}
+    </tr>
+    <tr>
+        <td><strong>MD</strong></td>
+        <td id="threeds-sim-md">{{jsonPath request.body '$.MD'}}</td>
+    </tr>
+</table>
+
+<p/>
+
+<form id="threeds-sim-form" name="form_name" method="post" action="{{jsonPath request.body '$.TermUrl'}}">
+    {{#eq (jsonPath request.body '$.PaReq') 'authorisation_fail'}}
+        <input id="threeds-sim-form-pa-res" type="hidden" name="PaRes" value="authorisation_fail"/>
+    {{else}}
+        <input id="threeds-sim-form-pa-res" type="hidden" name="PaRes" value="eJx9UsFugzAMve8rEPc2JECLkJuKiVbi0KpambQrAotGKtAlUHV/P8O6wjRtviR+frafncD6Vp2tK2qjmnpl87ljW1jnTaHqcmW/pttZYK8lpCeNGB8x7zRK2KExWYmWKijDC3zXcxeey3lgSzhEL2h+R+ZGlTUWRLj3ktRqLoB9u1RU56esbiVk+ftzspd8NGB3DCrUSTwN9TYbeV9xYGO1Q9ffDMm+qUIm0Z+2AtYzoMhalMLhS4cL3+I8FMtQuMAGHC59uahqOqrt+ktgUwBoP5rW9yEDsQD28ABvl6ZGYtDEjzuwUdsh2ktnYp7wiNqjkL5JaFX10LSwuBcKETrUfMDBtFnbGZnEm32abJNNDOwOQZ5dr3L379ADBTBX0vFJHZ1DVnQuG63aU9Vr/gkA6zWx4aklHOllqZlGNux9+Bo9Zfplnj4B7Re73w=="/>
+    {{/eq}}
+    <input id="threeds-sim-form-md" type="hidden" name="MD" value="{{jsonPath request.body '$.MD'}}"/>
+    <input id="threeds-sim-form-submit" type="submit" value="Submit" class="lefty button" />
+</form>
+
